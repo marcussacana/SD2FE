@@ -94,16 +94,34 @@ namespace SDR2FE
         private void ExportFont(string fileName)
         {
             int FontTableOffset = GetOffset(FONTDATA, 12);
+            int headersize = GetOffset(FONTDATA, 20);
             OutFont = new string[FontTableOffset];
             for (int i = 0; i < FontTableOffset; i++)
             {
-                this.Text = "Processing Font: " + i + "/" + OutFont.Length + " (" + ((i*100)/OutFont.Length) +"%)";
+                this.Text = "Processing Font: " + i + "/" + OutFont.Length + " (" + (((i*100)/OutFont.Length)/2) +"%)";
                 OutFont[i] = FONTDATA[i];
             }
             for (int i = 0; i < FONT.Length; i++)
             {
 
-                this.Text = "Making Chars Entries: " + i + "/" + FONT.Length + " (" + ((i*100)/FONT.Length) + "%)";
+                this.Text = "Making Chars Entries: " + i + "/" + FONT.Length + " (" + ((((i*100)/FONT.Length)/2)+50) + "%)";
+                if (FONT[i].LetterReplaced)
+                {
+                    string value = Tools.UnicodeStringToHex(FONT[i].OriginalLetter.ToString());
+                    int Ovar = Tools.HexToInt(value.Split(' ')[1] + value.Split(' ')[0]);
+                    Ovar = (Ovar * 2) + headersize;
+                    //      2 bytes   + Header Size
+                    OutFont[Ovar] = "FF";
+                    OutFont[Ovar + 1] = "FF";
+
+                    value = Tools.UnicodeStringToHex(FONT[i].Letter.ToString());
+                    int var = Tools.HexToInt(value.Split(' ')[1] + value.Split(' ')[0]);
+                    var = (var * 2) + headersize;
+                    //     2 bytes  + Header Size 
+                    string id = Tools.IntToHex(i);
+                    OutFont[var] = id.Split(' ')[0];
+                    OutFont[var+1] = id.Split(' ')[1];
+                }
                 string[] Char = ExportChar(FONT[i]);
                 for (int pos = 0; pos < Char.Length; pos++)
                     AppendFont(Char[pos]);
@@ -246,11 +264,15 @@ HEX POS - Without data
         }
         private void UpdateScrolls()
         {
-            System.Drawing.Size Img = FontTable.Image.Size;
-            VerticalScroll.Maximum = (Img.Height-panel1.Size.Height)+HorizontalScroll.Size.Height;
-            HorizontalScroll.Maximum = (Img.Width-panel1.Size.Width)+VerticalScroll.Size.Width;
-            VerticalScroll.LargeChange = (VerticalScroll.Maximum / 30);
-            HorizontalScroll.LargeChange = (HorizontalScroll.Maximum / 30);
+            try
+            {
+                System.Drawing.Size Img = FontTable.Image.Size;
+                VerticalScroll.Maximum = (Img.Height - panel1.Size.Height) + HorizontalScroll.Size.Height;
+                HorizontalScroll.Maximum = (Img.Width - panel1.Size.Width) + VerticalScroll.Size.Width;
+                VerticalScroll.LargeChange = (VerticalScroll.Maximum / 30);
+                HorizontalScroll.LargeChange = (HorizontalScroll.Maximum / 30);
+            }
+            catch { }
         }
         private void VerticalScroll_Scroll(object sender, ScrollEventArgs e)
         {
@@ -479,12 +501,36 @@ HEX POS - Without data
             else BNTSave.Enabled = true;
         }
 
+        private void VChar_TextChanged(object sender, EventArgs e)
+        {
+            string text = VChar.Text;
+            if (text.Length == 0)
+                return;
+            char newchar = text.ToCharArray()[0];
+            if (newchar != FONT[SelectedId].Letter)
+            {
+                DialogResult dr = MessageBox.Show("Now you try replace the '" + FONT[SelectedId].Letter + "' to '" + newchar + "'\nAre you sure about this?", "SDR2FE - Super Danganronpa 2 Font Editor", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dr == DialogResult.Yes)
+                {
+                    if (!FONT[SelectedId].LetterReplaced)
+                    {
+                        FONT[SelectedId].LetterReplaced = true;
+                        FONT[SelectedId].OriginalLetter = FONT[SelectedId].Letter;
+                    }
+                    FONT[SelectedId].Letter = newchar;
+                }
+                else
+                    VChar.Text = FONT[SelectedId].Letter.ToString();
+            }
+        }
     }
     public class FontChar
     {
         public Point Point = new Point(0, 0);
         public Size Size = new Size(0, 0);
         public char Letter = '0';
+        public bool LetterReplaced = false;
+        public char OriginalLetter = '0';
         public string[] ExtraContent = new string[0];
     }
     public class Tools

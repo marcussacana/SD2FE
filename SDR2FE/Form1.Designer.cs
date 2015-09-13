@@ -34,6 +34,7 @@
             this.HorizontalScroll = new System.Windows.Forms.HScrollBar();
             this.FontTable = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.BNTSave = new System.Windows.Forms.Button();
             this.BNTTestFont = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.RetChar = new System.Windows.Forms.Button();
@@ -56,7 +57,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Char = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.BNTSave = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FontTable)).BeginInit();
             this.panel2.SuspendLayout();
@@ -132,6 +132,17 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(213, 467);
             this.panel2.TabIndex = 1;
+            // 
+            // BNTSave
+            // 
+            this.BNTSave.Enabled = false;
+            this.BNTSave.Location = new System.Drawing.Point(3, 412);
+            this.BNTSave.Name = "BNTSave";
+            this.BNTSave.Size = new System.Drawing.Size(207, 23);
+            this.BNTSave.TabIndex = 9;
+            this.BNTSave.Text = "Save";
+            this.BNTSave.UseVisualStyleBackColor = true;
+            this.BNTSave.Click += new System.EventHandler(this.BNTSave_Click);
             // 
             // BNTTestFont
             // 
@@ -254,9 +265,9 @@
             this.VChar.Location = new System.Drawing.Point(33, 38);
             this.VChar.MaxLength = 1;
             this.VChar.Name = "VChar";
-            this.VChar.ReadOnly = true;
             this.VChar.Size = new System.Drawing.Size(33, 20);
             this.VChar.TabIndex = 5;
+            this.VChar.TextChanged += new System.EventHandler(this.VChar_TextChanged);
             // 
             // label3
             // 
@@ -400,17 +411,6 @@
             this.timer1.Enabled = true;
             this.timer1.Interval = 250;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // BNTSave
-            // 
-            this.BNTSave.Enabled = false;
-            this.BNTSave.Location = new System.Drawing.Point(3, 412);
-            this.BNTSave.Name = "BNTSave";
-            this.BNTSave.Size = new System.Drawing.Size(207, 23);
-            this.BNTSave.TabIndex = 9;
-            this.BNTSave.Text = "Save";
-            this.BNTSave.UseVisualStyleBackColor = true;
-            this.BNTSave.Click += new System.EventHandler(this.BNTSave_Click);
             // 
             // Form1
             // 
